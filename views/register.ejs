@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="/public/index.css">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VidShare Registration</title>
+</head>
+<body>
+
+  <div class="container">
+    <div class="login-box">
+      <h1>Create Your Account</h1>
+      <p>Sign up to share and explore videos on VidShare!</p>
+      <form action="/register" method="post">
+        <div class="input-group">
+          <label for="name">Username</label>
+          <input type="text" id="name" placeholder="Enter your username" name="username" required>
+        </div>
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" name="email" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" name="password" required>
+        </div>
+        <div class="input-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm your password" name="confirmPassword" required>
+        </div>
+        <button type="submit">Register</button>
+        <div class="forgot-signup">
+          <a href="/login">Already have an account? Log In</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>

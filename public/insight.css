@@ -1,0 +1,436 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #222;
+  padding: 15px 30px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  max-width: 600px;
+}
+
+.search-bar input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 25px;
+  border: none;
+  width: 100%;
+  margin-right: 10px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border: 2px solid #61dafb;
+}
+
+.search-bar button {
+  padding: 8px 15px;
+  background-color: #61dafb;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+  background-color: #21a1f1;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  position: absolute;
+  right: 30px;  /* Move profile image to the right */
+}
+
+.upload-btn {
+  background-color: #61dafb;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 88px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+ position: absolute;
+
+ left: 90%;
+}
+
+.upload-btn:hover {
+  background-color: #21a1f1;
+}
+
+/* Video Upload Styles */
+.video-upload {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+.video-upload h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.video-upload form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.video-upload input[type="file"] {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+}
+
+.video-upload input[type="file"]:hover {
+  background-color: #f1f1f1;
+}
+
+.video-upload button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #61dafb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.video-upload button:hover {
+  background-color: #21a1f1;
+}
+
+#upload-status {
+  font-size: 14px;
+  color: green;
+  margin-top: 10px;
+}
+
+/* Video Grid Styles */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.video-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  border-left: 1px solid black;
+
+  border-right: 1px solid black;
+}
+
+.video-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.video-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 2px solid #f4f4f4;
+}
+
+.video-info {
+  padding: 15px;
+}
+
+.video-info h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.video-info p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #222;
+  color: white;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6); /* Dark background */
+  animation: fadeIn 0.4s ease-out;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 30px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  border-radius: 10px;
+  animation: slideIn 0.5s ease-out;
+}
+
+.close {
+  color: #aaa;
+  font-size: 30px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+
+.close:hover,
+.close:focus {
+  color: #222;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Animation for Modal */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateY(-100px);
+  }
+  to {
+      transform: translateY(0);
+  }
+}
+#logoPic {
+
+
+  width: 45px;
+
+  height: 45px;
+
+
+  position: absolute;
+
+  left: 1.35%;
+
+  border-radius: 15px;
+}
+
+#logoz {
+  position: relative;
+
+  left: 3%;
+}
+
+#searchvid {
+display: none;
+
+  width: 6%;
+
+
+  position: absolute;
+
+  left: 32%;
+
+  border: 1px solid lightblue;
+
+  border-radius: 5px;
+
+
+
+
+
+
+}
+
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid with flexible columns */
+  gap: 20px; /* Spacing between cards */
+  padding: 20px;
+  justify-items: center; /* Center the items within the grid */
+}
+
+/* Video card container */
+.video-card-container {
+  background-color: #fff; /* White background */
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Prevent content from overflowing */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover transition */
+  text-align: center; /* Center content inside the card */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+}
+
+/* Hover effect for video cards */
+.video-card-container:hover {
+  transform: translateY(-5px); /* Lift effect */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+}
+
+/* Video styling */
+.video-card-container video {
+  width: 100%;
+  height: 200px; /* Set a fixed height for the videos */
+  object-fit: cover; /* Make sure the video covers the area without stretching */
+  border-radius: 8px; /* Rounded corners for the video */
+}
+
+/* Title styling */
+.video-title {
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Description styling */
+.video-description {
+  padding: 0 10px 10px;
+  font-size: 14px;
+  color: #666;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 50px; /* Limit the height of description */
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Optional: Add a play button overlay effect on hover */
+.video-card-container:hover video {
+  opacity: 0.9; /* Slightly dim the video on hover */
+}
+
+.video-card-container:hover .video-title {
+  color: #007BFF; /* Change title color on hover */
+}
+
+@media (max-width: 768px) {
+  header {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
+  #logoz {
+
+      font-size: 20px;
+      margin-top: 10px;
+      margin-left: 18px;
+  }
+
+  .search-bar {
+      width: 100%;
+      margin-top: 10px;
+      justify-content: space-between;
+  }
+
+  .search-bar input {
+      width: 70%;
+      padding: 8px;
+  }
+
+  .search-bar button {
+      width: 25%;
+  }
+
+  .profile {
+  position: absolute;
+
+  top: 2%;
+  left: 93%;
+  height: 30px;
+
+  width: 30px;
+
+  border-radius: 30px;
+
+  }
+
+  .upload-btn {
+      top: auto;
+      right: auto;
+      position: static;
+      margin-top: 10px;
+      width: 100%;
+      text-align: center;
+  }
+}
+
+

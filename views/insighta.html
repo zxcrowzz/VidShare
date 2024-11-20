@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VidShare - Home</title>
+  <link rel="stylesheet" href="/public/insight.css">
+</head>
+<body>
+ 
+  <header>
+    <img alt="logo" src="/public/DALL·E 2024-11-19 21.48.04 - A flat 2D logo for a platform named 'VidShare'. The logo features a minimalist design with a simple play button icon integrated into the text. The wor.png" id = "logoPic">
+    <div class="logo" id = "logoz">VidShare</div>
+    <div class="search-bar">
+      <label id = "searchvid" for="searchInput" class="sr-only">Search videos</label> <!-- Accessible label -->
+      <input type="text" id="searchInput" placeholder="Search videos..." title="Search for videos" aria-label="Search videos">
+      <button id = "activate" title="Search">Search</button>
+    </div>
+    <div class="profile">
+      <img src="/public/DALL·E 2024-11-19 21.48.04 - A flat 2D logo for a platform named 'VidShare'. The logo features a minimalist design with a simple play button icon integrated into the text. The wor.png" alt="Profile Picture" class="profile-img">
+    </div>
+    <!-- Add Upload Button -->
+    <button id="uploadBtn" class="upload-btn" title="Upload Video">Upload</button>
+  </header>
+
+  <main>
+    <section class="video-grid" id="videoContainer">
+      <!-- Video cards dynamically loaded here -->
+    </section>
+  </main>
+
+  <!-- Video Upload Modal -->
+  <div id="uploadModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Upload Your Video</h2>
+      <form id="uploadForm" action="/upload-video" method="POST" enctype="multipart/form-data">
+        <!-- Video file input with label and title/placeholder -->
+        <label for="video" id="videoLabel">Choose a video</label>
+        <input type="file" id="video" name="video" accept="video/*" required title="Choose a video file to upload">
+      
+        <!-- Title input with label and placeholder -->
+        <label for="title" id="titleLabel">Video Title</label>
+        <input type="text" id="title" name="title" placeholder="Enter video title" required title="Enter a title for the video">
+      
+        <!-- Submit button -->
+        <button type="submit">Upload Video</button>
+      </form>
+      
+      
+      <p id="upload-status"></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 VidShare. All Rights Reserved.</p>
+  </footer>
+
+ <!-- JS for handling video upload -->
+
+
+ <script>
+  const videoContainer = document.getElementById('videoContainer');
+  let currentPage = 1;
+  const videosPerPage = 5; // Number of videos to load at once
+  let isLoading = false; // Prevent multiple requests
+  
+  // Modal functionality
+  const modal = document.getElementById('uploadModal');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const closeModal = document.getElementsByClassName('close')[0];
+  
+  uploadBtn.onclick = () => {
+    modal.style.display = "block";
+  };
+  
+  closeModal.onclick = () => {
+    modal.style.display = "none";
+  };
+  
+  window.onclick = (event) => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+  
+  // Handle video upload form submission
+  const form = document.getElementById('uploadForm');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+  
+    try {
+      const response = await fetch('/upload-video', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      const data = await response.json();
+  
+      // Check if the video upload was successful
+      if (data.success) {
+        const video = data.video; // Assuming the response contains the uploaded video data
+        appendVideoToContainer(video); // Append uploaded video to the container
+      } else {
+        alert(data.message); // Show error message if upload failed
+      }
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      alert('An error occurred while uploading the video.');
+    }
+  });
+  
+  // Load videos on page load
+  document.addEventListener('DOMContentLoaded', loadVideos);
+  
+  // Load more videos when scrolled near the bottom
+  window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !isLoading) {
+      loadVideos();
+    }
+  });
+  
+  // Function to load videos with pagination
+  async function loadVideos() {
+  if (isLoading) return; // Prevent multiple requests
+
+  isLoading = true;
+  try {
+    const response = await fetch(`/get-videos?page=${currentPage}&limit=${videosPerPage}`);
+    const data = await response.json();
+
+    if (data.videos && Array.isArray(data.videos)) {
+      // Filter out videos that are already displayed on the page
+      const uniqueVideos = data.videos.filter(video => !videoContainer.querySelector(`[data-id="${video._id}"]`));
+
+      if (uniqueVideos.length > 0) {
+        displayVideos(uniqueVideos);  // Display unique videos only
+        currentPage++;
+      }
+
+      // If no new videos, stop further requests
+      if (data.videos.length === 0) {
+        console.log("No more videos to load.");
+      }
+    }
+  } catch (error) {
+    console.error('Error loading videos:', error);
+  } finally {
+    isLoading = false;
+  }
+}
+  
+  // Display videos in the DOM
+  function displayVideos(videos) {
+  videos.forEach(video => {
+    appendVideoToContainer(video);
+  });
+}
+  
+  // Append a single video to the container
+  async function appendVideoToContainer(video) {
+  if (!video.videoUrl) {
+    console.error("Invalid video URL.");
+    return;
+  }
+
+  const videoElement = document.createElement('video');
+  videoElement.controls = true;
+  videoElement.width = 300;
+  videoElement.classList.add("video-card");
+  videoElement.setAttribute('data-id', video._id);  // Set unique identifier to check for duplicates
+
+  const videoCard = document.createElement('div');
+  videoCard.classList.add('video-card-container');
+
+  const title = document.createElement('div');
+  title.classList.add('video-title');
+  title.textContent = video.title || 'Untitled Video';
+
+  const description = document.createElement('div');
+  description.classList.add('video-description');
+  description.textContent = video.description || 'No description available for this video.';
+
+  // Append title and description
+  videoCard.appendChild(title);
+  videoCard.appendChild(description);
+
+  try {
+    const response = await fetch(video.videoUrl); 
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch the video.");
+    }
+
+    const videoBlob = await response.blob();
+    const videoBlobUrl = URL.createObjectURL(videoBlob);
+
+    videoElement.src = videoBlobUrl;
+    videoCard.appendChild(videoElement);
+    videoContainer.appendChild(videoCard);
+
+  } catch (error) {
+    console.error("Error fetching video from source:", error);
+  }
+}
+  
+  // Handle search functionality
+  const activate = document.getElementById("activate");
+  
+  activate.addEventListener("click", searchVideos);
+  
+  function searchVideos() {
+    const searchTitle = document.getElementById('searchInput').value.trim();
+  
+    if (searchTitle) {
+      fetch(`/search-videos?title=${encodeURIComponent(searchTitle)}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data); // Log response data for debugging
+          videoContainer.innerHTML = ''; // Clear previous results
+          displayVideos(data); // Use data directly, assuming it's the videos array
+        })
+        .catch(error => {
+          console.error("Error fetching videos:", error);
+        });
+    }
+  }
+  </script>
+  
+  
+</body>
+</html>

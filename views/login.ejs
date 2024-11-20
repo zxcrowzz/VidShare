@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="/public/index.css">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VidShare Login</title>
+</head>
+<body>
+
+  <div class="container">
+    <div class="login-box">
+      <h1>Welcome to VidShare</h1>
+      <p>Sign in to share and explore videos!</p>
+      <form action="/login" method="post">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" name="email" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+        <div class="forgot-signup">
+          <a href="#">Forgot Password?</a>
+          <a href="/register">Don't have an account? Sign Up</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
