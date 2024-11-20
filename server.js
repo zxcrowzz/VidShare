@@ -41,13 +41,14 @@ const { v4: uuidV4 } = require('uuid');
 //we generated them with mkcert
 // $ mkcert create-ca
 // $ mkcert create-cert
-const key = fs.readFileSync('cert.key');
-const cert = fs.readFileSync('cert.crt');
+
 let connectedClients = 0;
 //we changed our express setup so we can use https
 //pass the key and cert to createServer on https
 const mega = require('mega');
-const expressServer = https.createServer({key, cert}, app);
+const expressServer = app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server running on port ${process.env.PORT || 3000}`);
+});
 // Create our socket.io server
 const PendingUser = require('./models/PendingUser');
 const { title } = require("process");
