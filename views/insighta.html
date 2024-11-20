@@ -66,6 +66,8 @@
 
 
  <script>
+
+   
   const videoContainer = document.getElementById('videoContainer');
   let currentPage = 1;
   const videosPerPage = 5; // Number of videos to load at once
@@ -89,7 +91,44 @@
       modal.style.display = "none";
     }
   };
-  
+  document.addEventListener('DOMContentLoaded', () => {
+  const profileImg = document.querySelector('.profile-img');
+  const profileMenu = document.getElementById('profile-menu');
+
+  // Toggle menu visibility
+  profileImg.addEventListener('click', () => {
+    profileMenu.classList.toggle('hidden');
+  });
+
+  // Add menu options functionalities
+  document.getElementById('settings-option').addEventListener('click', () => {
+    // Navigate to settings
+    window.location.href = '/settings';
+  });
+
+  document.getElementById('profile-option').addEventListener('click', () => {
+    // Navigate to profile
+    window.location.href = '/profile';
+  });
+
+  document.getElementById('edit-post-option').addEventListener('click', () => {
+    // Trigger post editing functionality
+    openEditPostModal();
+  });
+
+  // Click outside menu to close
+  document.addEventListener('click', (event) => {
+    if (!profileMenu.contains(event.target) && !profileImg.contains(event.target)) {
+      profileMenu.classList.add('hidden');
+    }
+  });
+});
+
+// Example function for editing posts
+function openEditPostModal() {
+  console.log('Edit post modal triggered');
+  // Add modal functionality here
+}
   // Handle video upload form submission
   const form = document.getElementById('uploadForm');
   form.addEventListener('submit', async (event) => {
