@@ -14,6 +14,45 @@
     <li id="edit-post-option">Edit Post</li>
   </ul>
     </div>
+
+
+<div id="profile-settings-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Profile Settings</h2>
+    <form id="profile-settings-form">
+      <label for="profile-name">Name:</label>
+      <input type="text" id="profile-name" placeholder="Enter your name" />
+
+      <label for="profile-email">Email:</label>
+      <input type="email" id="profile-email" placeholder="Enter your email" />
+
+      <label for="profile-img-upload">Profile Image:</label>
+      <input type="file" id="profile-img-upload" accept="image/*" />
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Post Modal -->
+<div id="edit-post-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Edit Post</h2>
+    <form id="edit-post-form">
+      <label for="post-content">Content:</label>
+      <textarea id="post-content" placeholder="Edit your post"></textarea>
+
+      <label for="post-media-upload">Upload Image/Video:</label>
+      <input type="file" id="post-media-upload" accept="image/*,video/*" />
+
+      <button type="submit">Save</button>
+      <button type="button" id="cancel-edit">Cancel</button>
+    </form>
+  </div>
+</div>
+
+
+  
   <header>
     
     <img alt="logo" src="/public/DALL·E 2024-11-19 21.48.04 - A flat 2D logo for a platform named 'VidShare'. The logo features a minimalist design with a simple play button icon integrated into the text. The wor.png" id = "logoPic">
@@ -95,7 +134,8 @@
   document.addEventListener('DOMContentLoaded', () => {
   const profileImg = document.querySelector('.profile-img');
   const profileMenu = document.getElementById('profile-menu');
-
+const profileSettingsModal = document.getElementById('profile-settings-modal');
+  const editPostModal = document.getElementById('edit-post-modal');
   // Toggle menu visibility
   profileImg.addEventListener('click', () => {
     console.log("tits");
@@ -104,19 +144,40 @@
   });
 
   // Add menu options functionalities
-  document.getElementById('settings-option').addEventListener('click', () => {
-    // Navigate to settings
-    window.location.href = '/settings';
+   document.getElementById('settings-option').addEventListener('click', () => {
+    profileSettingsModal.classList.remove('hidden');
+    profileMenu.classList.add('hidden');
+     profileSettingsModal.style.display = "block";
   });
 
-  document.getElementById('profile-option').addEventListener('click', () => {
-    // Navigate to profile
-    window.location.href = '/profile';
+  document.getElementById('profile-settings-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('profile-name').value;
+    const email = document.getElementById('profile-email').value;
+    const profileImgUpload = document.getElementById('profile-img-upload').files[0];
+
+    console.log('Save Changes:', { name, email, profileImgUpload });
+    profileSettingsModal.classList.add('hidden');
   });
 
+  // Edit Post functionality
   document.getElementById('edit-post-option').addEventListener('click', () => {
-    // Trigger post editing functionality
-    openEditPostModal();
+    editPostModal.classList.remove('hidden');
+    profileMenu.classList.add('hidden');
+    editPostModal.style.display = "block";
+  });
+
+  document.getElementById('edit-post-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const postContent = document.getElementById('post-content').value;
+    const mediaUpload = document.getElementById('post-media-upload').files[0];
+
+    console.log('Edit Post:', { postContent, mediaUpload });
+    editPostModal.classList.add('hidden');
+  });
+
+  document.getElementById('cancel-edit').addEventListener('click', () => {
+    editPostModal.classList.add('hidden');
   });
 
   // Click outside menu to close
