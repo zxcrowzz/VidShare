@@ -123,6 +123,7 @@
   document.addEventListener('click', (event) => {
     if (!profileMenu.contains(event.target) && !profileImg.contains(event.target)) {
       profileMenu.classList.add('hidden');
+       profileMenu.style.display = "none";
     }
   });
 });
