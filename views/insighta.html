@@ -37,17 +37,11 @@
 <!-- Edit Post Modal -->
 <div id="edit-post-modal" class="modal hidden">
   <div class="modal-content">
-    <h2>Edit Post</h2>
-    <form id="edit-post-form">
-      <label for="post-content">Content:</label>
-      <textarea id="post-content" placeholder="Edit your post"></textarea>
-
-      <label for="post-media-upload">Upload Image/Video:</label>
-      <input type="file" id="post-media-upload" accept="image/*,video/*" />
-
-      <button type="submit">Save</button>
-      <button type="button" id="cancel-edit">Cancel</button>
-    </form>
+    <h2>Edit Posts</h2>
+    <div id="user-posts-container">
+      <!-- Posts will be dynamically rendered here -->
+    </div>
+    <button id="close-edit-post-modal">Close</button>
   </div>
 </div>
 
@@ -108,46 +102,55 @@
  <script>
 
    
+document.addEventListener('DOMContentLoaded', () => {
+  // --- GLOBAL VARIABLES ---
   const videoContainer = document.getElementById('videoContainer');
   let currentPage = 1;
-  const videosPerPage = 5; // Number of videos to load at once
-  let isLoading = false; // Prevent multiple requests
-  
-  // Modal functionality
+  const videosPerPage = 5;
+  let isLoading = false;
+
   const modal = document.getElementById('uploadModal');
   const uploadBtn = document.getElementById('uploadBtn');
   const closeModal = document.getElementsByClassName('close')[0];
-  
-  uploadBtn.onclick = () => {
-    modal.style.display = "block";
-  };
-  
-  closeModal.onclick = () => {
-    modal.style.display = "none";
-  };
-  
-  window.onclick = (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
-  };
-  document.addEventListener('DOMContentLoaded', () => {
+
   const profileImg = document.querySelector('.profile-img');
   const profileMenu = document.getElementById('profile-menu');
-const profileSettingsModal = document.getElementById('profile-settings-modal');
+  const profileSettingsModal = document.getElementById('profile-settings-modal');
   const editPostModal = document.getElementById('edit-post-modal');
-  // Toggle menu visibility
+
+  // --- MODAL FUNCTIONALITY ---
+  uploadBtn.onclick = () => {
+    modal.style.display = 'block';
+  };
+
+  closeModal.onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  window.onclick = (event) => {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  };
+
+  // --- PROFILE MENU TOGGLE ---
   profileImg.addEventListener('click', () => {
-    console.log("tits");
     profileMenu.classList.toggle('hidden');
-    profileMenu.style.display = "block";
+    profileMenu.style.display = profileMenu.classList.contains('hidden') ? 'none' : 'block';
   });
 
-  // Add menu options functionalities
-   document.getElementById('settings-option').addEventListener('click', () => {
+  document.addEventListener('click', (event) => {
+    if (!profileMenu.contains(event.target) && !profileImg.contains(event.target)) {
+      profileMenu.classList.add('hidden');
+      profileMenu.style.display = 'none';
+    }
+  });
+
+  // --- PROFILE SETTINGS FUNCTIONALITY ---
+  document.getElementById('settings-option').addEventListener('click', () => {
     profileSettingsModal.classList.remove('hidden');
     profileMenu.classList.add('hidden');
-     profileSettingsModal.style.display = "block";
+    profileSettingsModal.style.display = 'block';
   });
 
   document.getElementById('profile-settings-form').addEventListener('submit', (e) => {
@@ -160,182 +163,173 @@ const profileSettingsModal = document.getElementById('profile-settings-modal');
     profileSettingsModal.classList.add('hidden');
   });
 
-  // Edit Post functionality
-  document.getElementById('edit-post-option').addEventListener('click', () => {
+  // --- EDIT POST FUNCTIONALITY ---
+  document.getElementById('edit-post-option').addEventListener('click', loadEditPostModal);
+
+  function loadEditPostModal() {
     editPostModal.classList.remove('hidden');
     profileMenu.classList.add('hidden');
-    editPostModal.style.display = "block";
-  });
+    editPostModal.style.display = 'block';
 
-  document.getElementById('edit-post-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const postContent = document.getElementById('post-content').value;
-    const mediaUpload = document.getElementById('post-media-upload').files[0];
+    // Fetch user posts
+    fetch('/get-user-posts') // Update to your actual endpoint
+      .then((response) => response.json())
+      .then((posts) => {
+        const postContainer = document.getElementById('user-posts-container');
+        postContainer.innerHTML = '';
 
-    console.log('Edit Post:', { postContent, mediaUpload });
-    editPostModal.classList.add('hidden');
+        if (posts.length) {
+          posts.forEach((post) => {
+            const postItem = document.createElement('div');
+            postItem.classList.add('post-item');
+            postItem.setAttribute('data-id', post._id);
+
+            postItem.innerHTML = `
+              <textarea class="post-content">${post.content}</textarea>
+              <button class="save-post" data-id="${post._id}">Save</button>
+              <button class="delete-post" data-id="${post._id}">Delete</button>
+            `;
+
+            postContainer.appendChild(postItem);
+          });
+        } else {
+          postContainer.innerHTML = '<p>No posts to edit.</p>';
+        }
+      })
+      .catch((error) => console.error('Error loading posts:', error));
+  }
+
+  document.getElementById('user-posts-container').addEventListener('click', (event) => {
+    const target = event.target;
+
+    if (target.classList.contains('save-post')) {
+      const postId = target.dataset.id;
+      const content = target.parentElement.querySelector('.post-content').value;
+
+      fetch(`/edit-post/${postId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          alert(data.success ? 'Post updated successfully!' : 'Failed to update post.');
+        })
+        .catch((error) => console.error('Error updating post:', error));
+    }
+
+    if (target.classList.contains('delete-post')) {
+      const postId = target.dataset.id;
+
+      if (confirm('Are you sure you want to delete this post?')) {
+        fetch(`/delete-post/${postId}`, { method: 'DELETE' })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              target.parentElement.remove();
+              alert('Post deleted successfully.');
+            } else {
+              alert('Failed to delete post.');
+            }
+          })
+          .catch((error) => console.error('Error deleting post:', error));
+      }
+    }
   });
 
   document.getElementById('cancel-edit').addEventListener('click', () => {
     editPostModal.classList.add('hidden');
+    editPostModal.style.display = 'none';
   });
 
-  // Click outside menu to close
-  document.addEventListener('click', (event) => {
-    if (!profileMenu.contains(event.target) && !profileImg.contains(event.target)) {
-      profileMenu.classList.add('hidden');
-       profileMenu.style.display = "none";
-    }
-  });
-});
-
-// Example function for editing posts
-function openEditPostModal() {
-  console.log('Edit post modal triggered');
-  // Add modal functionality here
-}
-  // Handle video upload form submission
+  // --- VIDEO UPLOAD FUNCTIONALITY ---
   const form = document.getElementById('uploadForm');
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
-  
+
     try {
       const response = await fetch('/upload-video', {
         method: 'POST',
         body: formData,
       });
-  
+
       const data = await response.json();
-  
-      // Check if the video upload was successful
       if (data.success) {
-        const video = data.video; // Assuming the response contains the uploaded video data
-        appendVideoToContainer(video); // Append uploaded video to the container
+        appendVideoToContainer(data.video);
       } else {
-        alert(data.message); // Show error message if upload failed
+        alert(data.message);
       }
     } catch (error) {
       console.error('Error uploading video:', error);
       alert('An error occurred while uploading the video.');
     }
   });
-  
-  // Load videos on page load
-  document.addEventListener('DOMContentLoaded', loadVideos);
-  
-  // Load more videos when scrolled near the bottom
+
+  // --- VIDEO DISPLAY FUNCTIONALITY ---
+  async function loadVideos() {
+    if (isLoading) return;
+
+    isLoading = true;
+    try {
+      const response = await fetch(`/get-videos?page=${currentPage}&limit=${videosPerPage}`);
+      const data = await response.json();
+
+      if (data.videos && data.videos.length) {
+        displayVideos(data.videos);
+        currentPage++;
+      }
+    } catch (error) {
+      console.error('Error loading videos:', error);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  function displayVideos(videos) {
+    videos.forEach(appendVideoToContainer);
+  }
+
+  function appendVideoToContainer(video) {
+    const videoCard = document.createElement('div');
+    videoCard.classList.add('video-card-container');
+
+    videoCard.innerHTML = `
+      <div class="video-title">${video.title || 'Untitled Video'}</div>
+      <div class="video-description">${video.description || 'No description available.'}</div>
+      <video controls width="300" src="${video.videoUrl}" class="video-card"></video>
+    `;
+
+    videoContainer.appendChild(videoCard);
+  }
+
+  // --- SEARCH FUNCTIONALITY ---
+  const activate = document.getElementById('activate');
+  activate.addEventListener('click', searchVideos);
+
+  function searchVideos() {
+    const searchTitle = document.getElementById('searchInput').value.trim();
+
+    if (searchTitle) {
+      fetch(`/search-videos?title=${encodeURIComponent(searchTitle)}`)
+        .then((response) => response.json())
+        .then((data) => {
+          videoContainer.innerHTML = '';
+          displayVideos(data);
+        })
+        .catch((error) => console.error('Error searching videos:', error));
+    }
+  }
+
+  // --- INITIAL VIDEO LOAD ---
+  loadVideos();
   window.addEventListener('scroll', () => {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !isLoading) {
       loadVideos();
     }
   });
-  
-  // Function to load videos with pagination
-  async function loadVideos() {
-  if (isLoading) return; // Prevent multiple requests
+});
 
-  isLoading = true;
-  try {
-    const response = await fetch(`/get-videos?page=${currentPage}&limit=${videosPerPage}`);
-    const data = await response.json();
-
-    if (data.videos && Array.isArray(data.videos)) {
-      // Filter out videos that are already displayed on the page
-      const uniqueVideos = data.videos.filter(video => !videoContainer.querySelector(`[data-id="${video._id}"]`));
-
-      if (uniqueVideos.length > 0) {
-        displayVideos(uniqueVideos);  // Display unique videos only
-        currentPage++;
-      }
-
-      // If no new videos, stop further requests
-      if (data.videos.length === 0) {
-        console.log("No more videos to load.");
-      }
-    }
-  } catch (error) {
-    console.error('Error loading videos:', error);
-  } finally {
-    isLoading = false;
-  }
-}
-  
-  // Display videos in the DOM
-  function displayVideos(videos) {
-  videos.forEach(video => {
-    appendVideoToContainer(video);
-  });
-}
-  
-  // Append a single video to the container
-  async function appendVideoToContainer(video) {
-  if (!video.videoUrl) {
-    console.error("Invalid video URL.");
-    return;
-  }
-
-  const videoElement = document.createElement('video');
-  videoElement.controls = true;
-  videoElement.width = 300;
-  videoElement.classList.add("video-card");
-  videoElement.setAttribute('data-id', video._id);  // Set unique identifier to check for duplicates
-
-  const videoCard = document.createElement('div');
-  videoCard.classList.add('video-card-container');
-
-  const title = document.createElement('div');
-  title.classList.add('video-title');
-  title.textContent = video.title || 'Untitled Video';
-
-  const description = document.createElement('div');
-  description.classList.add('video-description');
-  description.textContent = video.description || 'No description available for this video.';
-
-  // Append title and description
-  videoCard.appendChild(title);
-  videoCard.appendChild(description);
-
-  try {
-    const response = await fetch(video.videoUrl); 
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch the video.");
-    }
-
-    const videoBlob = await response.blob();
-    const videoBlobUrl = URL.createObjectURL(videoBlob);
-
-    videoElement.src = videoBlobUrl;
-    videoCard.appendChild(videoElement);
-    videoContainer.appendChild(videoCard);
-
-  } catch (error) {
-    console.error("Error fetching video from source:", error);
-  }
-}
-  
-  // Handle search functionality
-  const activate = document.getElementById("activate");
-  
-  activate.addEventListener("click", searchVideos);
-  
-  function searchVideos() {
-    const searchTitle = document.getElementById('searchInput').value.trim();
-  
-    if (searchTitle) {
-      fetch(`/search-videos?title=${encodeURIComponent(searchTitle)}`)
-        .then(response => response.json())
-        .then(data => {
-          console.log(data); // Log response data for debugging
-          videoContainer.innerHTML = ''; // Clear previous results
-          displayVideos(data); // Use data directly, assuming it's the videos array
-        })
-        .catch(error => {
-          console.error("Error fetching videos:", error);
-        });
-    }
-  }
   </script>
   
   
