@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     videoCard.innerHTML = `
       <div class="video-title">${video.title || 'Untitled Video'}</div>
       <div class="video-description">${video.description || 'No description available.'}</div>
-      <video controls width="300" src="${video.videoUrl}" class="video-card"></video>
+      <video crossOrigin="anonymous" controls width="300" src="${video.videoUrl}" class="video-card"></video>
     `;
 
     videoContainer.appendChild(videoCard);
