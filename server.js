@@ -778,51 +778,37 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
     bufferStream.push(null); // End the stream
 
     // Upload the video to Cloudinary using the stream
-    cloudinary.uploader.upload_stream(
-      { resource_type: 'video' },
-      async (error, result) => {
-        if (error) {
-          console.error('Error uploading to Cloudinary:', error);
-          return res.status(500).json({ success: false, message: 'Error uploading video to Cloudinary' });
-        }
+    bufferStream.pipe(
+      cloudinary.uploader.upload_stream(
+        { resource_type: 'video' },
+        async (error, result) => {
+          if (error) {
+            console.error('Error uploading to Cloudinary:', error);
+            return res.status(500).json({ success: false, message: 'Error uploading video to Cloudinary' });
+          }
 
-        try {
-          // Save video metadata in the database (MongoDB)
-          const newVideo = new Video({
-            title,
-            description,
-            videoUrl: result.secure_url, // Cloudinary video URL
-          });
+          try {
+            // Save video metadata in the database (MongoDB)
+            const newVideo = new Video({
+              title,
+              description,
+              videoUrl: result.secure_url, // Cloudinary video URL
+            });
 
-          await newVideo.save();
-          res.status(200).json({ success: true, video: newVideo });
-        } catch (dbError) {
-          console.error('Error saving video metadata:', dbError);
-          res.status(500).json({ success: false, message: 'Error saving video metadata' });
+            await newVideo.save();
+            res.status(200).json({ success: true, video: newVideo });
+          } catch (dbError) {
+            console.error('Error saving video metadata:', dbError);
+            res.status(500).json({ success: false, message: 'Error saving video metadata' });
+          }
         }
-      }
+      )
     );
-
-    // Pipe the buffer stream to Cloudinary
-    bufferStream.pipe(cloudinary.uploader.upload_stream);
   } catch (err) {
     console.error('Error uploading video:', err);
     res.status(500).json({ success: false, message: 'Error processing video upload' });
   }
 });
-  app.get('/get-videos', async (req, res) => {
-    const { page = 1, limit = 5 } = req.query;
-    const skip = (page - 1) * limit;
-  
-    try {
-      const videos = await Video.find().skip(skip).limit(parseInt(limit));
-      res.json({ videos });
-    } catch (err) {
-      console.error('Error fetching videos:', err);
-      res.status(500).json({ message: 'Error fetching videos' });
-    }
-  });
-  
   
   
   
