@@ -998,7 +998,7 @@ app.get('/api/profile-picture', async (req, res) => {
   
       const user = await User.findById(userId).select('profileImage');
   
-      if (!user || !user.profilePicture) {
+      if (!user || !user.profileImage) {
         return res.status(404).send('Profile picture not found');
       }
   
