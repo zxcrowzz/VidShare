@@ -74,9 +74,17 @@ cloudinary.config({
   });
 // Set up WebDAV client
 
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Save to 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    const fileName = Date.now() + path.extname(file.originalname); // Generate a unique filename
+    cb(null, fileName); // Save the file with a unique name
+  }
+});
 
-// Initialize Multer with memory storage
+// Initialize Multer with the updated diskStorage configuration
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
