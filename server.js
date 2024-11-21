@@ -80,7 +80,8 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const validTypes = ['image/jpeg', 'image/png', 'video/mp4'];
+    const validTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime'];
+
     if (validTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
