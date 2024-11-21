@@ -926,7 +926,19 @@ app.delete('/delete-post/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error deleting post' });
   }
 });
+app.get('/get-videos', async (req, res) => {
+  const { page, limit } = req.query;
+  // Logic for fetching videos from the database
+  const videos = await Video.find()
+    .skip((page - 1) * limit)
+    .limit(Number(limit));
 
+  if (videos) {
+    res.json(videos);  // Send JSON response
+  } else {
+    res.status(404).json({ message: 'Videos not found' });
+  }
+});
 
 app.get('/user-posts', async (req, res) => {
   try {
