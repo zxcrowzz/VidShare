@@ -930,17 +930,26 @@ app.delete('/delete-post/:id', async (req, res) => {
   }
 });
  app.get('/get-videos', async (req, res) => {
-    const { page = 1, limit = 5 } = req.query;
+  let { page = 1, limit = 5, initialLoad = false } = req.query;
+
+  try {
+    // Parse query parameters
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    // Increase the limit for the initial load
+    const effectiveLimit = initialLoad === 'true' ? limit * 2 : limit;
+
     const skip = (page - 1) * limit;
-  
-    try {
-      const videos = await Video.find().skip(skip).limit(parseInt(limit));
-      res.json({ videos });
-    } catch (err) {
-      console.error('Error fetching videos:', err);
-      res.status(500).json({ message: 'Error fetching videos' });
-    }
-  });
+    const videos = await Video.find().skip(skip).limit(effectiveLimit);
+
+    res.json({ videos });
+  } catch (err) {
+    console.error('Error fetching videos:', err);
+    res.status(500).json({ message: 'Error fetching videos' });
+  }
+});
+
 
 app.get('/user-posts', async (req, res) => {
   try {
