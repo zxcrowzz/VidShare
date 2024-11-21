@@ -949,14 +949,14 @@ app.get('/user-posts', async (req, res) => {
   }
 });
 app.get('/get-user-posts', (req, res) => {
-  // Assuming you have a function to get posts by the logged-in user
-  const userId = req.user.id;  // Or use a session or token-based identifier
-  Post.find({ userId })  // Assuming `Post` is your Mongoose model
+  const userId = req.user.id;
+  Post.find({ userId })
     .then(posts => {
-      res.json(posts);
+      res.json(posts);  // Send posts in JSON format
     })
     .catch(error => {
-      res.status(500).json({ message: 'Error retrieving posts' });
+      console.error("Error fetching posts:", error);
+      res.status(500).json({ message: 'Error retrieving posts' });  // Return JSON error message
     });
 });
 
