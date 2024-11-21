@@ -970,5 +970,23 @@ app.get('/user-profile', async (req, res) => {
   const user = await User.findById(req.user.id);  // Assuming you're storing user data in MongoDB
   res.json({ profilePicture: user.profileImage });
 });
+// Configure multer to save the file to a specific folder
 
+
+app.post('/save-profile', upload.single('profileImgUpload'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    // Assuming you're saving the image path to the user's profile
+    const user = await User.findById(req.userId); // Use the logged-in user's ID
+    user.profileImage = req.file.path; // Save the image path
+    await user.save();
+
+    res.json({ message: 'Profile updated successfully', profileImage: req.file.path });
+  } catch (error) {
+    res.status(500).json({ message: 'Error saving profile image', error });
+  }
+});
   module.exports = router;
