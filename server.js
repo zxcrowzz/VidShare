@@ -72,22 +72,9 @@ cloudinary.config({
   });
 // Set up WebDAV client
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, 'uploads/images/'); // Separate folder for images
-    } else if (file.mimetype.startsWith('video/')) {
-      cb(null, 'uploads/videos/'); // Separate folder for videos
-    } else {
-      cb(new Error('Unsupported file type'), null);
-    }
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+const storage = multer.memoryStorage();
 
-// Initialize Multer
+// Initialize Multer with memory storage
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
@@ -99,8 +86,6 @@ const upload = multer({
     }
   },
 });
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //offers will contain {}
 let offers = [
 
@@ -784,53 +769,47 @@ const { Readable } = require('stream');
 
 app.post('/upload-video', upload.single('video'), async (req, res) => {
   const { title, description } = req.body;
-
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No video file uploaded' });
-  }
-
   const videoBuffer = req.file.buffer;
 
   try {
-    // Create a readable stream from the buffer
+    // Create a readable stream from the buffer for Cloudinary
     const bufferStream = new Readable();
     bufferStream.push(videoBuffer);
     bufferStream.push(null); // End the stream
 
-    // Upload video to Cloudinary
-    const uploadStream = cloudinary.uploader.upload_stream(
+    // Upload the video to Cloudinary using the stream
+    cloudinary.uploader.upload_stream(
       { resource_type: 'video' },
       async (error, result) => {
         if (error) {
-          console.error('Cloudinary upload error:', error);
+          console.error('Error uploading to Cloudinary:', error);
           return res.status(500).json({ success: false, message: 'Error uploading video to Cloudinary' });
         }
 
         try {
-          // Save video metadata in the database
+          // Save video metadata in the database (MongoDB)
           const newVideo = new Video({
             title,
             description,
-            videoUrl: result.secure_url,
+            videoUrl: result.secure_url, // Cloudinary video URL
           });
 
           await newVideo.save();
           res.status(200).json({ success: true, video: newVideo });
         } catch (dbError) {
-          console.error('Database save error:', dbError);
+          console.error('Error saving video metadata:', dbError);
           res.status(500).json({ success: false, message: 'Error saving video metadata' });
         }
       }
     );
 
-    // Pipe buffer stream to Cloudinary
-    bufferStream.pipe(uploadStream);
+    // Pipe the buffer stream to Cloudinary
+    bufferStream.pipe(cloudinary.uploader.upload_stream);
   } catch (err) {
-    console.error('Unexpected server error:', err);
+    console.error('Error uploading video:', err);
     res.status(500).json({ success: false, message: 'Error processing video upload' });
   }
 });
-
   app.get('/get-videos', async (req, res) => {
     const { page = 1, limit = 5 } = req.query;
     const skip = (page - 1) * limit;
