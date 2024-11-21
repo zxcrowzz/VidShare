@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadProfilePicture() {
   try {
     const response = await fetch('/api/profile-picture');
-    const imgElement = document.getElementById('profile-img');
+    const imgElement = document.querySelector('.profile-img');
   
     
     // Check if the image element exists in the DOM
