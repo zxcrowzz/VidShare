@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     profileSettingsModal.style.display = 'block';
   });
 
-  document.getElementById('profile-settings-form').addEventListener('submit', (e) => {
+  document.getElementById('profile-settings-modal').addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('profile-name').value;
     const email = document.getElementById('profile-email').value;
