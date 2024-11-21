@@ -996,7 +996,7 @@ app.get('/api/profile-picture', async (req, res) => {
     try {
       const userId = req.session.userId || req.user._id; // Adjust this to match your authentication system
   
-      const user = await User.findById(userId).select('profilePicture');
+      const user = await User.findById(userId).select('profileImage');
   
       if (!user || !user.profilePicture) {
         return res.status(404).send('Profile picture not found');
@@ -1004,7 +1004,7 @@ app.get('/api/profile-picture', async (req, res) => {
   
       // Set the appropriate content type (e.g., image/png or image/jpeg)
       res.contentType('image/png'); // Adjust if needed
-      res.send(user.profilePicture);
+      res.send(user.profileImage);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to retrieve profile picture' });
@@ -1016,7 +1016,7 @@ app.post('/api/upload-profile-picture', upload.single('profilePic'), async (req,
       const profilePicBuffer = req.file.buffer;
   
       // Save the image in MongoDB by updating the user profile
-      await User.findByIdAndUpdate(userId, { profilePicture: profilePicBuffer });
+      await User.findByIdAndUpdate(userId, { profileImage: profilePicBuffer });
   
       res.json({ message: 'Profile picture updated successfully!' });
     } catch (error) {
