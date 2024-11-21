@@ -968,7 +968,7 @@ app.get('/get-user-posts', (req, res) => {
 });
 app.get('/user-profile', async (req, res) => {
   const user = await User.findById(req.user.id);  // Assuming you're storing user data in MongoDB
-  res.json({ profilePicture: user.profilePicture });
+  res.json({ profilePicture: user.profileImage });
 });
 
   module.exports = router;
