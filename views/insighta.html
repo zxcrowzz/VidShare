@@ -306,19 +306,19 @@ document.addEventListener('DOMContentLoaded', () => {
 const ctx = canvas.getContext('2d');
 
 // Load the video
-videoElement.addEventListener('loadeddata', function () {
+videocard.addEventListener('loadeddata', function () {
   // Set the canvas size to match the video
-  canvas.width = videoElement.videoWidth;
-  canvas.height = videoElement.videoHeight;
+  canvas.width = videocard.videoWidth;
+  canvas.height = videocard.videoHeight;
   
   // Seek to a time (e.g., 1 second) for the thumbnail
-  videoElement.currentTime = 1;
+ videocard.currentTime = 1;
 });
 
 // When the video time is updated, capture the frame and update the poster
-videoElement.addEventListener('seeked', function () {
-  ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-  videoElement.poster = canvas.toDataURL(); // Set the dynamic thumbnail
+videocard.addEventListener('seeked', function () {
+  ctx.drawImage(videocard, 0, 0, canvas.width, canvas.height);
+  videocard.poster = canvas.toDataURL(); // Set the dynamic thumbnail
 });
   }
 
