@@ -73,15 +73,34 @@ cloudinary.config({
 // Set up WebDAV client
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname));
-    },
-  });
-  const upload = multer();
-  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+  destination: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, 'uploads/images/'); // Separate folder for images
+    } else if (file.mimetype.startsWith('video/')) {
+      cb(null, 'uploads/videos/'); // Separate folder for videos
+    } else {
+      cb(new Error('Unsupported file type'), null);
+    }
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+// Initialize Multer
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const validTypes = ['image/jpeg', 'image/png', 'video/mp4'];
+    if (validTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only .jpeg, .png, and .mp4 files are supported'), false);
+    }
+  },
+});
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //offers will contain {}
 let offers = [
 
@@ -852,7 +871,27 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
     }
   });
   
+app.post('/update-profile', upload.single('profileImg'), async (req, res) => {
+  const { name, email } = req.body;
+  const profileImgPath = req.file ? `/uploads/images/${req.file.filename}` : null;
 
+  try {
+    const user = await User.findById(req.user.id); // Assuming `req.user.id` contains the logged-in user's ID
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    if (profileImgPath) user.profileImg = profileImgPath;
+
+    await user.save();
+    res.status(200).json({ success: true, message: 'Profile updated', user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error updating profile' });
+  }
+});
 
   app.get('/video/:id', async (req, res) => {
     try {
@@ -885,4 +924,38 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
   app.get('/enter-code', (req, res) => {
     res.render('enter-code');  // This should render your HTML form for entering the confirmation code
 });
+app.delete('/delete-post/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
+
+    if (post.user.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+
+    // Delete the media file from the filesystem
+    if (post.media) {
+      const mediaPath = path.join(__dirname, post.media);
+      fs.unlink(mediaPath, (err) => {
+        if (err) console.error(`Error deleting file: ${err.message}`);
+      });
+    }
+
+    await Post.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: 'Post deleted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error deleting post' });
+  }
+});
+
+
+
+
+
   module.exports = router;
