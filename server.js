@@ -780,49 +780,57 @@ app.get('/api/user/email', checkAuthenticated, async (req, res) => {
  
   const { Readable } = require('stream');
 
+const { Readable } = require('stream');
+
 app.post('/upload-video', upload.single('video'), async (req, res) => {
   const { title, description } = req.body;
+
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'No video file uploaded' });
+  }
+
   const videoBuffer = req.file.buffer;
 
   try {
     // Create a readable stream from the buffer
     const bufferStream = new Readable();
     bufferStream.push(videoBuffer);
-    bufferStream.push(null);  // Indicate the end of the stream
+    bufferStream.push(null); // End the stream
 
-    // Upload the video to Cloudinary using the stream
-    const result = await cloudinary.uploader.upload_stream(
+    // Upload video to Cloudinary
+    const uploadStream = cloudinary.uploader.upload_stream(
       { resource_type: 'video' },
-      (error, result) => {
+      async (error, result) => {
         if (error) {
+          console.error('Cloudinary upload error:', error);
           return res.status(500).json({ success: false, message: 'Error uploading video to Cloudinary' });
         }
 
-        // Save video metadata in the database
-        const newVideo = new Video({
-          title,
-          description,
-          videoUrl: result.secure_url, // Cloudinary URL for the video
-        });
-
-        newVideo.save()
-          .then(() => {
-            res.json({ success: true, video: newVideo });
-          })
-          .catch(err => {
-            console.error('Error saving video metadata:', err);
-            res.status(500).json({ success: false, message: 'Error saving video metadata' });
+        try {
+          // Save video metadata in the database
+          const newVideo = new Video({
+            title,
+            description,
+            videoUrl: result.secure_url,
           });
+
+          await newVideo.save();
+          res.status(200).json({ success: true, video: newVideo });
+        } catch (dbError) {
+          console.error('Database save error:', dbError);
+          res.status(500).json({ success: false, message: 'Error saving video metadata' });
+        }
       }
     );
 
-    // Pipe the video buffer stream to Cloudinary
-    bufferStream.pipe(result);
+    // Pipe buffer stream to Cloudinary
+    bufferStream.pipe(uploadStream);
   } catch (err) {
-    console.error('Error uploading video:', err);
-    res.status(500).json({ success: false, message: 'Error uploading video' });
+    console.error('Unexpected server error:', err);
+    res.status(500).json({ success: false, message: 'Error processing video upload' });
   }
 });
+
   app.get('/get-videos', async (req, res) => {
     const { page = 1, limit = 5 } = req.query;
     const skip = (page - 1) * limit;
