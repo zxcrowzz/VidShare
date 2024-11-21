@@ -161,8 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadProfilePicture() {
   try {
     const response = await fetch('/api/profile-picture');
-    const imgElement = document.getElementById('pfpIMG');
-const imgElement1 = document.getElementById('pfppostContainer');
+    const imgElement = document.getElementById('profile-img');
+  
     
     // Check if the image element exists in the DOM
     if (!imgElement) {
@@ -173,7 +173,7 @@ const imgElement1 = document.getElementById('pfppostContainer');
     if (response.ok) {
       const blob = await response.blob(); // Convert the image data into a blob
       imgElement.src = URL.createObjectURL(blob);
-       imgElement1.src = URL.createObjectURL(blob);
+      
     } else if (response.status === 404) {
       console.error('Profile picture not found. Using default image.');
      
