@@ -955,6 +955,15 @@ app.delete('/delete-post/:id', async (req, res) => {
 });
 
 
+app.get('/user-posts', async (req, res) => {
+  try {
+    const posts = await Post.find({ user: req.user.id }); // Fetch posts for the logged-in user
+    res.status(200).json({ success: true, posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error fetching posts' });
+  }
+});
 
 
 
