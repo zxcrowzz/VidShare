@@ -101,6 +101,15 @@
 
  <script>
 
+
+   fetch('/user-profile')
+    .then(response => response.json())
+    .then(data => {
+      const profileImg = document.getElementById('profile-img');
+      profileImg.src = data.profilePicture; // Set the profile image source to the URL or base64 string
+    })
+    .catch(error => console.error('Error loading profile picture:', error));
+
    
 document.addEventListener('DOMContentLoaded', () => {
   // --- GLOBAL VARIABLES ---
