@@ -966,6 +966,9 @@ app.get('/get-user-posts', (req, res) => {
       res.status(500).json({ message: 'Error retrieving posts' });
     });
 });
-
+app.get('/user-profile', async (req, res) => {
+  const user = await User.findById(req.user.id);  // Assuming you're storing user data in MongoDB
+  res.json({ profilePicture: user.profilePicture });
+});
 
   module.exports = router;
