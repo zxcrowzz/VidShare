@@ -124,6 +124,10 @@ document.getElementById('profile-img-upload').addEventListener('change', async f
  
    
 document.addEventListener('DOMContentLoaded', () => {
+
+
+
+  
   // --- GLOBAL VARIABLES ---
   const videoContainer = document.getElementById('videoContainer');
   let currentPage = 1;
@@ -154,6 +158,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+    async function loadProfilePicture() {
+  try {
+    const response = await fetch('/api/profile-picture');
+    const imgElement = document.getElementById('pfpIMG');
+const imgElement1 = document.getElementById('pfppostContainer');
+    
+    // Check if the image element exists in the DOM
+    if (!imgElement) {
+      console.error('Profile image element not found!');
+      return;
+    }
+
+    if (response.ok) {
+      const blob = await response.blob(); // Convert the image data into a blob
+      imgElement.src = URL.createObjectURL(blob);
+       imgElement1.src = URL.createObjectURL(blob);
+    } else if (response.status === 404) {
+      console.error('Profile picture not found. Using default image.');
+     
+    }
+  } catch (error) {
+    console.error('Error loading profile picture:', error);
+  }
+}
+
+
+loadProfilePicture()
   // --- PROFILE MENU TOGGLE ---
   profileImg.addEventListener('click', () => {
     profileMenu.classList.toggle('hidden');
