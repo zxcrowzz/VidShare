@@ -90,34 +90,37 @@
 
 
  <script>
-const form = document.querySelector('#profile-form');
-  
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const fileInput = document.querySelector('#profile-img-upload');
-    const formData = new FormData();
-    formData.append('profileImgUpload', fileInput.files[0]);
-    
-    try {
-      const response = await fetch('/save-profile', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
-      console.log('Profile updated:', data);
-    } catch (error) {
-      console.error('Error saving profile:', error);
-    }
-  });
 
-   fetch('/user-profile')
-  .then(response => response.json())
-  .then(data => {
-    const profileImg = document.querySelector('.profile-img');
-    profileImg.src = data.profileImage; // Set the profile image source to the URL returned from the server
-  })
-  .catch(error => console.error('Error loading profile picture:', error));
+
+document.getElementById('profile-img-upload').addEventListener('change', async function () {
+  const file = this.files[0];
+
+  if (file) {
+    // Create FormData and append the file
+    const formData = new FormData();
+    formData.append('profilePic', file);
+
+    // Send the file to the server
+    try {
+      const response = await fetch('/api/upload-profile-picture', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Profile picture uploaded successfully!');
+      } else {
+        console.error('Error uploading picture:', result.error);
+      }
+    } catch (error) {
+      console.error('Failed to upload profile picture:', error);
+    }
+  }
+});
+   
+
  
    
 document.addEventListener('DOMContentLoaded', () => {
