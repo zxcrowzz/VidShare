@@ -383,6 +383,11 @@ display: none;
 }
 
 @media (max-width: 768px) {
+#logoPic {
+
+
+margin-left: 10px;
+}
   header {
       flex-direction: column;
       align-items: flex-start;
@@ -392,7 +397,7 @@ display: none;
 
       font-size: 20px;
       margin-top: 10px;
-      margin-left: 18px;
+      margin-left: 27px;
   }
 
   .search-bar {
