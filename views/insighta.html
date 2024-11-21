@@ -17,21 +17,11 @@
 
 
 <div id="profile-settings-modal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Profile Settings</h2>
-    <form id="profile-settings-form">
-      <label for="profile-name">Name:</label>
-      <input type="text" id="profile-name" placeholder="Enter your name" />
+ <form id="profile-form">
+  <input type="file" id="profile-img-upload" name="profileImgUpload" />
+  <button type="submit">Save Changes</button>
+</form>
 
-      <label for="profile-email">Email:</label>
-      <input type="email" id="profile-email" placeholder="Enter your email" />
-
-      <label for="profile-img-upload">Profile Image:</label>
-      <input type="file" id="profile-img-upload" accept="image/*" />
-
-      <button type="submit">Save Changes</button>
-    </form>
-  </div>
 </div>
 
 <!-- Edit Post Modal -->
@@ -100,16 +90,35 @@
 
 
  <script>
-
+const form = document.querySelector('#profile-form');
+  
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const fileInput = document.querySelector('#profile-img-upload');
+    const formData = new FormData();
+    formData.append('profileImgUpload', fileInput.files[0]);
+    
+    try {
+      const response = await fetch('/save-profile', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      console.log('Profile updated:', data);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    }
+  });
 
    fetch('/user-profile')
-    .then(response => response.json())
-    .then(data => {
-      const profileImg = document.querySelector('.profile-img');
-      profileImg.src = data.profileImage; // Set the profile image source to the URL or base64 string
-    })
-    .catch(error => console.error('Error loading profile picture:', error));
-
+  .then(response => response.json())
+  .then(data => {
+    const profileImg = document.querySelector('.profile-img');
+    profileImg.src = data.profileImage; // Set the profile image source to the URL returned from the server
+  })
+  .catch(error => console.error('Error loading profile picture:', error));
+ 
    
 document.addEventListener('DOMContentLoaded', () => {
   // --- GLOBAL VARIABLES ---
