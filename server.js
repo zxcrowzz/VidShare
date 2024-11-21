@@ -926,19 +926,18 @@ app.delete('/delete-post/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error deleting post' });
   }
 });
-app.get('/get-videos', async (req, res) => {
-  const { page, limit } = req.query;
-  // Logic for fetching videos from the database
-  const videos = await Video.find()
-    .skip((page - 1) * limit)
-    .limit(Number(limit));
-
-  if (videos) {
-    res.json(videos);  // Send JSON response
-  } else {
-    res.status(404).json({ message: 'Videos not found' });
-  }
-});
+ app.get('/get-videos', async (req, res) => {
+    const { page = 1, limit = 5 } = req.query;
+    const skip = (page - 1) * limit;
+  
+    try {
+      const videos = await Video.find().skip(skip).limit(parseInt(limit));
+      res.json({ videos });
+    } catch (err) {
+      console.error('Error fetching videos:', err);
+      res.status(500).json({ message: 'Error fetching videos' });
+    }
+  });
 
 app.get('/user-posts', async (req, res) => {
   try {
