@@ -930,7 +930,7 @@ app.delete('/delete-post/:id', async (req, res) => {
   }
 });
  app.get('/get-videos', async (req, res) => {
-  const { page = 1, limit = 15 } = req.query;
+  const { page = 1, limit = 5 } = req.query;
   const skip = (page - 1) * limit;
 
   try {
