@@ -949,17 +949,20 @@ app.get('/user-posts', async (req, res) => {
   }
 });
 app.get('/get-user-posts', (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
+
   const userId = req.user.id;
   Post.find({ userId })
     .then(posts => {
-      res.json(posts);  // Send posts in JSON format
+      res.json(posts);
     })
     .catch(error => {
       console.error("Error fetching posts:", error);
-      res.status(500).json({ message: 'Error retrieving posts' });  // Return JSON error message
+      res.status(500).json({ message: 'Error retrieving posts' });
     });
 });
-
 
 
   module.exports = router;
