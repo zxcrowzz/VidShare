@@ -778,7 +778,7 @@ app.get('/api/user/email', checkAuthenticated, async (req, res) => {
   
   // Handle video upload
  
-  const { Readable } = require('stream');
+
 
 const { Readable } = require('stream');
 
