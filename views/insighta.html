@@ -186,31 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-    async function loadProfilePicture() {
-  try {
-    const response = await fetch('/api/profile-picture');
-    const imgElement = document.querySelector('.profile-img');
-  
-    
-    // Check if the image element exists in the DOM
-    if (!imgElement) {
-      console.error('Profile image element not found!');
-      return;
-    }
-
-    if (response.ok) {
-      const blob = await response.blob(); // Convert the image data into a blob
-      imgElement.src = URL.createObjectURL(blob);
-      
-    } else if (response.status === 404) {
-      console.error('Profile picture not found. Using default image.');
-     
-    }
-  } catch (error) {
-    console.error('Error loading profile picture:', error);
-  }
-}
-
+   
 
 
   // --- PROFILE MENU TOGGLE ---
@@ -233,15 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     profileSettingsModal.style.display = 'block';
   });
 
-  document.getElementById('profile-settings-modal').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('profile-name').value;
-    const email = document.getElementById('profile-email').value;
-    const profileImgUpload = document.getElementById('profile-img-upload').files[0];
-
-    console.log('Save Changes:', { name, email, profileImgUpload });
-    profileSettingsModal.classList.add('hidden');
-  });
+ 
 
   // --- EDIT POST FUNCTIONALITY ---
   document.getElementById('edit-post-option').addEventListener('click', loadEditPostModal);
@@ -432,7 +400,7 @@ function searchVideos() {
 
   // --- INITIAL VIDEO LOAD ---
   loadVideos();
-  loadProfilePicture()
+  
   window.addEventListener('scroll', () => {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !isLoading) {
       loadVideos();
