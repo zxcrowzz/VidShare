@@ -959,7 +959,22 @@ app.get('/get-videos', async (req, res) => {
   }
 });
 
+app.get('/profile', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id); // Ensure the user is authenticated
 
+    res.status(200).json({
+      message: 'Profile fetched successfully',
+      user: {
+        name: user.name,
+        email: user.email,
+        profileImageUrl: user.profileImageUrl, // Send the profile image URL
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching profile data', error });
+  }
+});
 
 
 app.get('/user-posts', async (req, res) => {
