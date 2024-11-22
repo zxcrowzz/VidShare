@@ -50,8 +50,8 @@
     <div class="profile">
       <img src="/public/DALL·E 2024-11-19 21.48.04 - A flat 2D logo for a platform named 'VidShare'. The logo features a minimalist design with a simple play button icon integrated into the text. The wor.png" alt="Profile Picture" class="profile-img">
     </div>
-    <!-- Add Upload Button -->
-    <button id="uploadBtn" class="upload-btn" title="Upload Video">Upload</button>
+    <!-- Add Up Button -->
+    <button id="upBtn" class="up-btn" title="Upload Video">Upload</button>
   </header>
 
   <main>
@@ -336,10 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function displayVideos(videos) {
-    videos.forEach(appendVideoToContainer);
-  }
-
+function displayVideos(videos) {
+  videos.forEach(video => appendVideoToContainer(video));
+}
   function appendVideoToContainer(video) {
     const videoCard = document.createElement('div');
     videoCard.classList.add('video-card-container');
@@ -348,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="video-title">${video.title || 'Untitled Video'}</div>
       <div class="video-description">${video.description || 'No description available.'}</div>
       <video crossOrigin="anonymous" controls width="300" src="${video.videoUrl}" class="video-card"></video>
+      <div class="nameVideo">${video.user?.name || 'Anonymous User'}</div>
     `;
 
     videoContainer.appendChild(videoCard);
@@ -379,19 +379,24 @@ videocard.addEventListener('seeked', function () {
   const activate = document.getElementById('activate');
   activate.addEventListener('click', searchVideos);
 
-  function searchVideos() {
-    const searchTitle = document.getElementById('searchInput').value.trim();
+ function searchVideos() {
+  const searchTitle = document.getElementById('searchInput').value.trim();
 
-    if (searchTitle) {
-      fetch(`/search-videos?title=${encodeURIComponent(searchTitle)}`)
-        .then((response) => response.json())
-        .then((data) => {
-          videoContainer.innerHTML = '';
-          displayVideos(data);
-        })
-        .catch((error) => console.error('Error searching videos:', error));
-    }
+  if (searchTitle) {
+    fetch(`/search-videos?title=${encodeURIComponent(searchTitle)}`)
+      .then((response) => response.json())
+      .then((data) => {
+        videoContainer.innerHTML = ''; // Clear the container
+        if (data.videos && data.videos.length) {
+          displayVideos(data.videos);
+        } else {
+          console.log('No matching videos found.');
+          videoContainer.innerHTML = '<p>No videos found.</p>';
+        }
+      })
+      .catch((error) => console.error('Error searching videos:', error));
   }
+}
 
   // --- INITIAL VIDEO LOAD ---
   loadVideos();
