@@ -770,7 +770,7 @@ app.get('/api/user/email', checkAuthenticated, async (req, res) => {
 
 const { Readable } = require('stream');
 
-pp.post('/upload-video', upload.single('video'), async (req, res) => {
+app.post('/upload-video', upload.single('video'), async (req, res) => {
   const { title, description } = req.body;
   const videoBuffer = req.file.buffer;
 
