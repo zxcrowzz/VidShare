@@ -569,3 +569,17 @@ button[type="submit"]:hover {
   z-index: 1000;
 }
 
+
+
+#logout {
+
+
+  background-color: white;
+
+  border: none;
+
+  margin-left: 15px;
+
+
+}
+
