@@ -555,3 +555,18 @@ button[type="submit"]:hover {
 #close-modal:hover {
   color: #ff0000;
 }
+.modal {
+
+height: 30%;
+
+width: 20%;
+
+position: absolute;
+
+right: 0;
+
+top: 5%;
+
+  
+
+}
