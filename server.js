@@ -820,33 +820,34 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'insighta.html'));
   });
   
-  app.get('/search-videos', async (req, res) => {
-    const title = req.query.title; // Get the search title from the query parameter
-  
-    if (!title) {
-      return res.status(400).json({ error: 'Title query is required' });
+ app.get('/search-videos', async (req, res) => {
+  const title = req.query.title; // Get the search title from the query parameter
+
+  if (!title) {
+    return res.status(400).json({ error: 'Title query is required' });
+  }
+
+  console.log('Searching for title:', title); // Debugging log
+
+  try {
+    // Search for videos whose title contains the search string (case-insensitive)
+    const videos = await Video.find({
+      title: { $regex: title, $options: 'i' }, // 'i' makes it case-insensitive
+    })
+    .populate('user', 'name'); // Populate the user field with name only
+
+    if (videos.length === 0) {
+      console.log('No videos found');
+    } else {
+      console.log('Videos found:', videos.length);
     }
-  
-    console.log('Searching for title:', title); // Debugging log
-  
-    try {
-      // Search for videos whose title contains the search string (case-insensitive)
-      const videos = await Video.find({
-        title: { $regex: title, $options: 'i' }, // 'i' makes it case-insensitive
-      });
-  
-      if (videos.length === 0) {
-        console.log('No videos found');
-      } else {
-        console.log('Videos found:', videos.length);
-      }
-  
-      res.json(videos); // Return the found videos as JSON
-    } catch (error) {
-      console.error("Error querying videos:", error);
-      res.status(500).json({ error: "An error occurred while fetching videos" });
-    }
-  });
+
+    res.json(videos); // Return the found videos as JSON
+  } catch (error) {
+    console.error("Error querying videos:", error);
+    res.status(500).json({ error: "An error occurred while fetching videos" });
+  }
+});
   
 app.post('/update-profile', upload.single('profileImg'), async (req, res) => {
   const { name, email } = req.body;
