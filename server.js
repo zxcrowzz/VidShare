@@ -930,23 +930,28 @@ app.delete('/delete-post/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error deleting post' });
   }
 });
- app.get('/get-videos', async (req, res) => {
+app.get('/get-videos', async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
   const skip = (page - 1) * limit;
 
   try {
-    const videos = await Video.find().skip(skip).limit(parseInt(limit));
-    
-    // Check if fewer than the limit are available
+    // Fetch videos with pagination and populate user data
+    const videos = await Video.find()
+      .populate('user', 'name') // Populate user's name only
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // Count total videos in the database
     const totalVideos = await Video.countDocuments();
-    const hasMore = skip + videos.length < totalVideos; // If more videos exist after this page
-    
-    res.json({ videos, hasMore });
+    const hasMore = skip + videos.length < totalVideos; // Check if more videos exist after this page
+
+    res.status(200).json({ videos, hasMore, totalVideos, currentPage: page });
   } catch (err) {
     console.error('Error fetching videos:', err);
     res.status(500).json({ message: 'Error fetching videos' });
   }
 });
+
 
 
 
