@@ -470,12 +470,12 @@ margin-left: 10px;
 }
 
 
-.modal.hidden {
+.modal1.hidden {
   visibility: hidden;
   opacity: 0;
 }
 
-.modal.visible {
+.modal1.visible {
   visibility: visible;
   opacity: 1;
 }
@@ -555,7 +555,7 @@ button[type="submit"]:hover {
 #close-modal:hover {
   color: #ff0000;
 }
-.modal {
+.modal1 {
   height: 30%;
   width: 20%;
   position: absolute;
