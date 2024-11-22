@@ -18,11 +18,14 @@
 
 
 <div id="profile-settings-modal" class="modal hidden">
- <form id="profile-form">
-  <input type="file" id="profile-img-upload" name="profileImgUpload" />
-  <button type="submit">Save Changes</button>
-</form>
-
+  <form id="profile-form" enctype="multipart/form-data">
+    <label for="profile-img-upload">Upload Profile Image</label>
+    <input type="file" id="profile-img-upload" name="profileImgUpload" accept="image/*" required />
+    <button type="submit">Save Changes</button>
+  </form>
+  <div id="profile-image-preview">
+    <img id="profile-img-preview" src="" alt="Profile Image Preview" style="max-width: 150px; display: none;">
+  </div>
 </div>
 
 <!-- Edit Post Modal -->
@@ -93,31 +96,55 @@
  <script>
 
 
-document.getElementById('profile-img-upload').addEventListener('change', async function () {
-  const file = this.files[0];
+document.getElementById('profile-form').addEventListener('submit', async function(event) {
+  event.preventDefault(); // Prevent the form from submitting the traditional way
+
+  const formData = new FormData();
+  const fileInput = document.getElementById('profile-img-upload');
+  const file = fileInput.files[0]; // Get the file the user selected
 
   if (file) {
-    // Create FormData and append the file
-    const formData = new FormData();
-    formData.append('profilePic', file);
+    formData.append('profileImgUpload', file);
 
-    // Send the file to the server
     try {
-      const response = await fetch('/api/upload-profile-picture', {
+      // Send the file to the server
+      const response = await fetch('/upload-profile', {
         method: 'POST',
         body: formData,
       });
 
-      const result = await response.json();
+      const data = await response.json();
 
-      if (response.ok) {
-        alert('Profile picture uploaded successfully!');
+      if (data.user) {
+        alert('Profile image uploaded successfully!');
+        // Optionally update the profile image on the page
+        document.getElementById('profile-img-preview').src = data.user.profileImageUrl;
+        document.getElementById('profile-img-preview').style.display = 'block'; // Show the preview
+        closeProfileModal(); // Close the modal after successful upload
       } else {
-        console.error('Error uploading picture:', result.error);
+        alert('Error uploading image: ' + data.message);
       }
     } catch (error) {
-      console.error('Failed to upload profile picture:', error);
+      console.error('Error uploading profile image:', error);
+      alert('Error uploading profile image.');
     }
+  } else {
+    alert('Please select an image to upload.');
+  }
+});
+
+// Optional: Handle image preview before uploading
+document.getElementById('profile-img-upload').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  const preview = document.getElementById('profile-img-preview');
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      preview.src = reader.result; // Display the image preview
+      preview.style.display = 'block'; // Make the image preview visible
+    };
+    reader.readAsDataURL(file); // Read the file as a data URL
   }
 });
    
