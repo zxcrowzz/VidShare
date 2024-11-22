@@ -347,7 +347,7 @@ function displayVideos(videos) {
       <div class="video-title">${video.title || 'Untitled Video'}</div>
       <div class="video-description">${video.description || 'No description available.'}</div>
       <video crossOrigin="anonymous" controls width="300" src="${video.videoUrl}" class="video-card"></video>
-      <div class="nameVideo">${video.user.name || 'Anonymous User'}</div>
+      <div class="nameVideo">${video.user?.name || 'Anonymous User'}</div>
     `;
 
     videoContainer.appendChild(videoCard);
