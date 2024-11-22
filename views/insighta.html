@@ -20,7 +20,7 @@
 <div id="profile-settings-modal" class="modal hidden">
   <form id="profile-form" enctype="multipart/form-data">
     <label for="profile-img-upload">Upload Profile Image</label>
-    <input type="file" id="profile-img-upload" name="profileImgUpload" accept="image/*" required />
+    <input type="file" id="profile-img-upload" name= "profileImage" accept="image/*" required />
     <button type="submit">Save Changes</button>
   </form>
   <div id="profile-image-preview">
@@ -104,7 +104,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
   const file = fileInput.files[0]; // Get the file the user selected
 
   if (file) {
-    formData.append('profileImageUrl', file);
+    formData.append('profileImage', file);
 
     try {
       // Send the file to the server
