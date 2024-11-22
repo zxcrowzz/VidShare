@@ -421,7 +421,7 @@ function searchVideos() {
 });
 
 
-
+document.addEventListener('DOMContentLoaded', () => {
    window.onload = async () => {
   try {
     const response = await fetch('/profile'); // Request the profile data from the server
@@ -439,6 +439,7 @@ function searchVideos() {
     console.error('Error loading profile data:', error);
   }
 };
+});
   </script>
   
   
