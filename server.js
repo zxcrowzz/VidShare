@@ -1030,7 +1030,7 @@ app.get('/api/profile-picture', async (req, res) => {
       res.status(500).json({ error: 'Failed to retrieve profile picture' });
     }
   });
-router.post('/upload-profile', upload1.single('profileImage'), async (req, res) => {
+app.use('/upload-profile', upload1.single('profileImage'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }
