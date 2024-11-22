@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (data.user) {
       // Update the profile image with the URL returned from the server
-      const profileImg = document.getElementById('profile-img');
+      const profileImg = document.querySelector('.profile-img');
       profileImg.src = data.user.profileImageUrl || 'default-profile-image-url'; // Fallback to a default image if not set
       profileImg.style.display = 'block'; // Ensure the image is visible
     } else {
