@@ -38,7 +38,12 @@ app.use(express.static(__dirname))
 const ObjectId = require('mongoose').Types.ObjectId;
 const { v4: uuidV4 } = require('uuid');
 const Post = require('./models/Post');
-
+app.use((req, res, next) => {
+    if (!req.secure) {
+        return res.redirect('https://' + req.headers.host + req.url);
+    }
+    next();
+});
 //we need a key and cert to run https
 //we generated them with mkcert
 // $ mkcert create-ca
