@@ -96,7 +96,27 @@
 
 
  <script>
-
+ document.getElementById('logout').addEventListener('click', function() {
+    fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === 'Logged out successfully') {
+        // Handle successful logout (e.g., redirect to login page, clear user session data)
+        window.location.href = '/login'; // Redirect to the login page
+      } else {
+        alert('Logout failed: ' + data.message); // Show error message
+      }
+    })
+    .catch(error => {
+      console.error('Error during logout:', error);
+      alert('Logout failed due to an error.');
+    });
+  });
 const documentClose = document.getElementById("closeBtnn");
 
   documentClose.addEventListener("click", function(burh) {
