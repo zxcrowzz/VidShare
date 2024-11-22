@@ -51,7 +51,7 @@
       <img src="/public/DALL·E 2024-11-19 21.48.04 - A flat 2D logo for a platform named 'VidShare'. The logo features a minimalist design with a simple play button icon integrated into the text. The wor.png" alt="Profile Picture" class="profile-img">
     </div>
     <!-- Add Up Button -->
-    <button id="uploadBtn" class="up-btn" title="Upload Video">Upload</button>
+    <button id="uploadBtn" class="upload-btn" title="Upload Video">Upload</button>
   </header>
 
   <main>
@@ -347,7 +347,7 @@ function displayVideos(videos) {
       <div class="video-title">${video.title || 'Untitled Video'}</div>
       <div class="video-description">${video.description || 'No description available.'}</div>
       <video crossOrigin="anonymous" controls width="300" src="${video.videoUrl}" class="video-card"></video>
-      <div class="nameVideo">${video.user?.name || 'Anonymous User'}</div>
+      <div class="nameVideo">${video.user.name || 'Anonymous User'}</div>
     `;
 
     videoContainer.appendChild(videoCard);
