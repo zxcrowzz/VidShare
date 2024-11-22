@@ -819,7 +819,9 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
   app.get('/upload-video', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'insighta.html'));
   });
-  
+  app.get('/upload-profile', (req, res) => {
+     res.sendFile(path.join(__dirname, 'views', 'insighta.html'));
+});
  app.get('/search-videos', async (req, res) => {
   const title = req.query.title; // Get the search title from the query parameter
 
