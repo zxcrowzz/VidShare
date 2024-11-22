@@ -38,6 +38,7 @@ app.use(express.static(__dirname))
 const ObjectId = require('mongoose').Types.ObjectId;
 const { v4: uuidV4 } = require('uuid');
 const Post = require('./models/Post');
+app.enable('trust proxy');
 app.use((req, res, next) => {
     if (!req.secure) {
         return res.redirect('https://' + req.headers.host + req.url);
