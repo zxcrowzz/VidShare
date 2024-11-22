@@ -556,17 +556,15 @@ button[type="submit"]:hover {
   color: #ff0000;
 }
 .modal {
-
-height: 30%;
-
-width: 20%;
-
-position: absolute;
-
-right: 0;
-
-top: 5%;
-
-  
-
+  height: 30%;
+  width: 20%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff; /* Background color for the modal */
+  padding: 20px; /* Padding inside the modal */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
+
