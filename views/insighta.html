@@ -22,7 +22,7 @@
     <label for="profile-img-upload">Upload Profile Image</label>
     <input type="file" id="profile-img-upload" name= "profileImage" accept="image/*" required />
     <button type="submit">Save Changes</button>
-    <button type = "submit">Close</button>
+    <button id = "closeBtnn" type = "submit">Close</button>
   </form>
   <div id="profile-image-preview">
     <img id="profile-img-preview" src="" alt="Profile Image Preview" style="max-width: 150px; display: none;">
@@ -96,7 +96,13 @@
 
  <script>
 
+const documentClose = document.getElementById("closeBtnn");
 
+   documentClose.addEventListener("click", function(burh) {
+
+      document.querySelector("profile-settings-modal").style.display = "none";
+
+     )};
 document.getElementById('profile-form').addEventListener('submit', async function(event) {
   event.preventDefault(); // Prevent the form from submitting the traditional way
 
