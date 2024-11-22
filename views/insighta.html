@@ -100,7 +100,7 @@ const documentClose = document.getElementById("closeBtnn");
 
   documentClose.addEventListener("click", function(burh) {
 
-      document.querySelector("profile-settings-modal").style.display = "none";
+      document.getElementById("profile-settings-modal").style.display = "none";
 
   });
 document.getElementById('profile-form').addEventListener('submit', async function(event) {
@@ -135,7 +135,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
         document.getElementById('profile-img-preview').style.display = 'block'; // Show the preview
 
         // Optionally close the modal after successful upload
-       document.querySelector("profile-settings-modal").style.display = "none";
+       document.getElementById("profile-settings-modal").style.display = "none";
          
         
       } else {
