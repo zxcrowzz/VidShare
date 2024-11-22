@@ -793,7 +793,7 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
           try {
             // Save video metadata in the database (MongoDB)
             const newVideo = new Video({
-              user: req.user._id, // Save the user ID here
+              user: req.user.id, // Save the user ID here
               title,
               description,
               videoUrl: result.secure_url, // Cloudinary video URL
