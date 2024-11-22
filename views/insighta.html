@@ -128,7 +128,9 @@ document.getElementById('profile-form').addEventListener('submit', async functio
         document.getElementById('profile-img-preview').style.display = 'block'; // Show the preview
 
         // Optionally close the modal after successful upload
-       
+       document.querySelector("profile-settings-modal").style.display = "none";
+         
+        
       } else {
         alert('Error uploading image: ' + data.message);
       }
