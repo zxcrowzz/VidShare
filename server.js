@@ -1024,20 +1024,40 @@ app.get('/api/profile-picture', async (req, res) => {
       res.status(500).json({ error: 'Failed to retrieve profile picture' });
     }
   });
-app.post('/api/upload-profile-picture', upload.single('profilePic'), async (req, res) => {
-    try {
-      const userId = req.session.userId || req.user._id; // Adjust for your auth system
-      const profilePicBuffer = req.file.buffer;
-  
-      // Save the image in MongoDB by updating the user profile
-      await User.findByIdAndUpdate(userId, { profileImage: profilePicBuffer });
-  
-      res.json({ message: 'Profile picture updated successfully!' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to upload profile picture' });
-    }
-  });
+router.post('/upload-profile', upload.single('profileImage'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  try {
+    // Upload the image to Cloudinary
+    const result = await cloudinary.uploader.upload_stream(
+      { resource_type: 'image', public_id: `profile_images/${req.user._id}` }, // Customize public_id if needed
+      async (error, result) => {
+        if (error) {
+          return res.status(500).json({ message: 'Error uploading image to Cloudinary', error });
+        }
+
+        // Update the user profile with the Cloudinary URL
+        const user = await User.findByIdAndUpdate(
+          req.user._id, // Assuming `req.user` contains the logged-in user
+          { profileImageUrl: result.secure_url },
+          { new: true }
+        );
+
+        // Return the updated user data
+        res.status(200).json({ message: 'Profile image uploaded successfully', user });
+      }
+    );
+
+    // Pipe the file buffer from Multer to Cloudinary's upload stream
+    result.end(req.file.buffer);
+  } catch (error) {
+    console.error('Error uploading profile image:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 
 
