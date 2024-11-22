@@ -104,7 +104,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
   const file = fileInput.files[0]; // Get the file the user selected
 
   if (file) {
-    formData.append('profileImgUpload', file);
+    formData.append('profileImageUrl', file);
 
     try {
       // Send the file to the server
