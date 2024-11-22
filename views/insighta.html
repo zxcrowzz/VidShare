@@ -415,13 +415,21 @@ function searchVideos() {
 
 
 
- try {
+
+    
+  });
+});
+
+
+
+   window.onload = async () => {
+  try {
     const response = await fetch('/profile'); // Request the profile data from the server
     const data = await response.json();
 
     if (data.user) {
       // Update the profile image with the URL returned from the server
-      const profileImg = document.querySelector('.profile-img');
+      const profileImg = document.getElementById('profile-img');
       profileImg.src = data.user.profileImageUrl || 'default-profile-image-url'; // Fallback to a default image if not set
       profileImg.style.display = 'block'; // Ensure the image is visible
     } else {
@@ -430,10 +438,7 @@ function searchVideos() {
   } catch (error) {
     console.error('Error loading profile data:', error);
   }
-    
-  });
-});
-
+};
   </script>
   
   
