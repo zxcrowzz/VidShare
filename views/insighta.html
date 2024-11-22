@@ -120,7 +120,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
         // Optionally update the profile image on the page
         document.getElementById('profile-img-preview').src = data.user.profileImageUrl;
         document.getElementById('profile-img-preview').style.display = 'block'; // Show the preview
-        closeProfileModal(); // Close the modal after successful upload
+       // Close the modal after successful upload
       } else {
         alert('Error uploading image: ' + data.message);
       }
