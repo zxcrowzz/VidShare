@@ -770,7 +770,7 @@ app.get('/api/user/email', checkAuthenticated, async (req, res) => {
 
 const { Readable } = require('stream');
 
-app.post('/upload-video', upload.single('video'), async (req, res) => {
+pp.post('/upload-video', upload.single('video'), async (req, res) => {
   const { title, description } = req.body;
   const videoBuffer = req.file.buffer;
 
@@ -793,6 +793,7 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
           try {
             // Save video metadata in the database (MongoDB)
             const newVideo = new Video({
+              user: req.user._id, // Save the user ID here
               title,
               description,
               videoUrl: result.secure_url, // Cloudinary video URL
