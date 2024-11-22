@@ -379,22 +379,27 @@ videocard.addEventListener('seeked', function () {
   const activate = document.getElementById('activate');
   activate.addEventListener('click', searchVideos);
 
- function searchVideos() {
+function searchVideos() {
   const searchTitle = document.getElementById('searchInput').value.trim();
 
   if (searchTitle) {
     fetch(`/search-videos?title=${encodeURIComponent(searchTitle)}`)
       .then((response) => response.json())
       .then((data) => {
+        console.log('Data received from search:', data); // Add this line to inspect the response
+
         videoContainer.innerHTML = ''; // Clear the container
-        if (data.videos && data.videos.length) {
-          displayVideos(data.videos);
+        if (Array.isArray(data) && data.length) {
+          // Ensure that 'data' is an array and contains videos
+          displayVideos(data);
         } else {
           console.log('No matching videos found.');
           videoContainer.innerHTML = '<p>No videos found.</p>';
         }
       })
       .catch((error) => console.error('Error searching videos:', error));
+  } else {
+    console.log('Search input is empty');
   }
 }
 
